@@ -24,7 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
-      className={`${sora.variable} ${plexMono.variable} h-full antialiased`}
+      className={`${sora.variable} ${plexMono.variable} antialiased`}
     >
       <body className="min-h-full bg-bg text-paper font-sans">{children}</body>
     </html>

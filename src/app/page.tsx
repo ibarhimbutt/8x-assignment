@@ -9,6 +9,7 @@ import { ChevronDown, Lock, Mic, ArrowUp, Sparkles, CheckCircle2 } from "lucide-
 import { StarsBackground } from "@/components/StarsBackground";
 import { FeatureCarousel } from "@/components/FeatureCarousel";
 import { TeamsSection } from "@/components/TeamsSection";
+import { ValuePropsSection } from "@/components/ValuePropsSection";
 import { Button } from "@/components/ui/button";
 
 function NavDropdown({ title, items }: { title: string, items: string[] }) {
@@ -54,7 +55,7 @@ function NavDropdown({ title, items }: { title: string, items: string[] }) {
 
 export default function LandingPage() {
   return (
-    <StarsBackground className="min-h-screen overflow-x-hidden flex flex-col">
+    <StarsBackground className="min-h-screen flex flex-col">
       {/* Header */}
       <header className="mx-auto flex w-full max-w-[1280px] items-center justify-between px-6 py-6">
         <Logo size="lg" />
@@ -117,6 +118,7 @@ export default function LandingPage() {
 
       <FeatureCarousel />
       <TeamsSection />
+      <ValuePropsSection />
 
       {/* Bottom Gradient */}
       <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-[800px] bg-[radial-gradient(ellipse_at_bottom,_#084d6e_0%,_transparent_60%)] opacity-80 z-0" />

@@ -5,9 +5,11 @@ import { motion } from "framer-motion";
 import { Logo } from "@/components/Logo";
 import { ChevronDown, Lock, Mic, ArrowUp, Sparkles, CheckCircle2 } from "lucide-react";
 
+import { StarsBackground } from "@/components/StarsBackground";
+
 export default function LandingPage() {
   return (
-    <div className="fathom-starfield min-h-screen overflow-x-hidden flex flex-col">
+    <StarsBackground className="min-h-screen overflow-x-hidden flex flex-col">
       {/* Header */}
       <header className="mx-auto flex w-full max-w-[1280px] items-center justify-between px-6 py-6">
         <Logo size="lg" />
@@ -258,6 +260,6 @@ export default function LandingPage() {
           </div>
         </div>
       </footer>
-    </div>
+    </StarsBackground>
   );
 }

@@ -84,27 +84,6 @@ textarea {
   font: inherit;
 }
 
-.fathom-starfield {
-  background-color: #000000;
-  background-image: 
-    radial-gradient(1px 1px at 5% 15%, rgba(255, 255, 255, 0.8), transparent),
-    radial-gradient(1px 1px at 15% 45%, rgba(255, 255, 255, 0.6), transparent),
-    radial-gradient(1.5px 1.5px at 25% 85%, rgba(255, 255, 255, 0.9), transparent),
-    radial-gradient(1px 1px at 35% 25%, rgba(255, 255, 255, 0.5), transparent),
-    radial-gradient(2px 2px at 45% 65%, rgba(255, 255, 255, 0.7), transparent),
-    radial-gradient(1px 1px at 55% 10%, rgba(255, 255, 255, 0.8), transparent),
-    radial-gradient(1.5px 1.5px at 65% 55%, rgba(255, 255, 255, 0.6), transparent),
-    radial-gradient(1px 1px at 75% 95%, rgba(255, 255, 255, 0.9), transparent),
-    radial-gradient(2px 2px at 85% 35%, rgba(255, 255, 255, 0.5), transparent),
-    radial-gradient(1px 1px at 95% 75%, rgba(255, 255, 255, 0.7), transparent),
-    radial-gradient(1px 1px at 10% 90%, rgba(255, 255, 255, 0.4), transparent),
-    radial-gradient(1.5px 1.5px at 30% 10%, rgba(255, 255, 255, 0.8), transparent),
-    radial-gradient(1px 1px at 50% 80%, rgba(255, 255, 255, 0.5), transparent),
-    radial-gradient(2px 2px at 70% 20%, rgba(255, 255, 255, 0.6), transparent),
-    radial-gradient(1px 1px at 90% 60%, rgba(255, 255, 255, 0.9), transparent);
-  background-size: 600px 600px;
-}
-
 .glow-ring {
   box-shadow:
     0 0 0 1px rgba(255, 255, 255, 0.08),

@@ -8,6 +8,7 @@ import {
   critique,
   hiring,
 } from "./small";
+import { sprint, leadership, oneOnOne } from "./more";
 
 export const meetings: Meeting[] = [
   q3Review,
@@ -17,6 +18,9 @@ export const meetings: Meeting[] = [
   csEscalation,
   critique,
   hiring,
+  sprint,
+  leadership,
+  oneOnOne,
 ].sort((a, b) => (a.startedAt < b.startedAt ? 1 : -1));
 
 export function getMeeting(id: string): Meeting | undefined {

@@ -36,6 +36,7 @@ export function MeetingView({ meeting, initialTime = 0 }: { meeting: Meeting; in
   const [localHi, setLocalHi] = useState<Highlight[]>([]);
   const [pending, setPending] = useState<Utterance | null>(null);
   const [copied, setCopied] = useState<string | null>(null);
+  const [speed, setSpeed] = useState(1);
   const activeRef = useRef<HTMLButtonElement | null>(null);
   const last = useRef<number | null>(null);
 
@@ -55,7 +56,7 @@ export function MeetingView({ meeting, initialTime = 0 }: { meeting: Meeting; in
     let raf = 0;
     const tick = (now: number) => {
       if (last.current == null) last.current = now;
-      const dt = (now - last.current) / 1000;
+      const dt = ((now - last.current) / 1000) * speed;
       last.current = now;
       setTime((t) => {
         const next = t + dt;
@@ -69,7 +70,7 @@ export function MeetingView({ meeting, initialTime = 0 }: { meeting: Meeting; in
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [playing, meeting.duration]);
+  }, [playing, meeting.duration, speed]);
 
   const highlights = useMemo(
     () => [...meeting.highlights, ...localHi].sort((a, b) => a.start - b.start),
@@ -114,7 +115,15 @@ export function MeetingView({ meeting, initialTime = 0 }: { meeting: Meeting; in
   }
 
   async function copyClip(h: Highlight) {
-    const url = `${window.location.origin}/s/${meeting.id}/${h.id}`;
+    const { encodeClip } = await import("@/lib/share");
+    const token = encodeClip({
+      meetingId: meeting.id,
+      highlightId: h.id,
+      start: h.start,
+      end: h.end,
+      title: h.title,
+    });
+    const url = `${window.location.origin}/share/${token}`;
     await navigator.clipboard.writeText(url);
     setCopied(h.id);
     setTimeout(() => setCopied(null), 1600);
@@ -129,6 +138,8 @@ export function MeetingView({ meeting, initialTime = 0 }: { meeting: Meeting; in
           bars={wave}
           highlights={highlights}
           playing={playing}
+          speed={speed}
+          onSpeed={setSpeed}
           onToggle={() => setPlaying((p) => !p)}
           onSeek={seek}
         />
@@ -300,6 +311,8 @@ function Wave({
   bars,
   highlights,
   playing,
+  speed,
+  onSpeed,
   onToggle,
   onSeek,
 }: {
@@ -308,6 +321,8 @@ function Wave({
   bars: number[];
   highlights: Highlight[];
   playing: boolean;
+  speed: number;
+  onSpeed: (n: number) => void;
   onToggle: () => void;
   onSeek: (s: number) => void;
 }) {
@@ -334,7 +349,21 @@ function Wave({
           {formatClock(time)}
           <span className="text-paper-dim"> / {formatClock(duration)}</span>
         </span>
-        <span className="ml-auto text-[12px] text-paper-dim">Stubbed capture · clock, not a Zoom file</span>
+        <span className="ml-auto flex items-center gap-3 text-[12px] text-paper-dim">
+          <label className="flex items-center gap-1">
+            Speed
+            <select
+              value={speed}
+              onChange={(e) => onSpeed(Number(e.target.value))}
+              className="rounded-full border border-line bg-ink px-2 py-0.5"
+            >
+              <option value={1}>1×</option>
+              <option value={1.5}>1.5×</option>
+              <option value={2}>2×</option>
+            </select>
+          </label>
+          Stubbed capture · clock, not a Zoom file
+        </span>
       </div>
       <div
         ref={ref}

@@ -8,7 +8,7 @@ export const twoMinute: Meeting = {
   duration: 128,
   platform: "zoom",
   attendeeIds: ["maya", "jordan"],
-  defaultTemplate: "standup",
+  defaultTemplate: "oneonone",
   tag: "Internal",
   utterances: talk("s", [
     { s: "maya", t: 3, text: "Just two minutes. Are we still saying the bot is stubbed in the walkthrough?" },
@@ -19,6 +19,14 @@ export const twoMinute: Meeting = {
     { s: "jordan", t: 102, text: "Thanks. Quorum in a minute." },
   ]),
   summaries: {
+    oneonone: {
+      template: "oneonone",
+      headline: "Bot stub is a line in the first thirty seconds of the walkthrough, not a footnote.",
+      sections: [
+        { title: "Today", bullets: ["Jordan writes the five-minute camera-on script.", "Maya highlights the stub line and sends it to Dana."] },
+        { title: "Stuck", bullets: ["None."] },
+      ],
+    },
     standup: {
       template: "standup",
       headline: "Bot stub is a line in the first thirty seconds of the walkthrough, not a footnote.",
@@ -156,7 +164,7 @@ export const csEscalation: Meeting = {
   duration: 1260,
   platform: "teams",
   attendeeIds: ["chris", "maya", "alex"],
-  defaultTemplate: "general",
+  defaultTemplate: "cs",
   tag: "Customer success",
   utterances: talk("cs", [
     { s: "chris", t: 5, text: "Northwind's success manager is angry. They think we recorded a call and then sent them an empty workspace. Which, to be fair, we did." },
@@ -167,6 +175,14 @@ export const csEscalation: Meeting = {
     { s: "chris", t: 220, text: "I'll call them after this and send the moment, not an apology essay." },
   ]),
   summaries: {
+    cs: {
+      template: "cs",
+      headline: "Northwind almost churned on an empty home. Keep the seat by sending the March 3 migration clip and shipping utterance search.",
+      sections: [
+        { title: "Issue", bullets: ["Empty workspace after a recorded call.", "Could not find the migration date because search was title-only."] },
+        { title: "Save path", bullets: ["Send the moment, not a long apology.", "Show a living home this week."] },
+      ],
+    },
     general: {
       template: "general",
       headline: "Northwind almost churned on an empty home. Keep the seat by sending the March 3 migration clip and shipping utterance search.",
@@ -228,8 +244,8 @@ export const hiring: Meeting = {
   duration: 2100,
   platform: "zoom",
   attendeeIds: ["jordan", "elena", "kit"],
-  defaultTemplate: "general",
-  tag: "People",
+  defaultTemplate: "interview",
+  tag: "Interview",
   utterances: talk("hr", [
     { s: "jordan", t: 10, text: "Kit, thanks for coming back. We want someone who will delete a Zoom SDK, not add one." },
     { s: "kit", t: 38, text: "I ripped a bot out of a previous job. The meeting page is the product. Capture is a hose. Most teams drown in the hose." },
@@ -239,6 +255,14 @@ export const hiring: Meeting = {
     { s: "kit", t: 188, text: "I'm in. I already don't want to build the bot." },
   ]),
   summaries: {
+    interview: {
+      template: "interview",
+      headline: "Kit understands the product: the meeting page, not the hose. Strong yes from Jordan and Elena.",
+      sections: [
+        { title: "Signal", bullets: ["Has removed a recording bot in production.", "Talked about virtualizing the transcript, not decorating it."] },
+        { title: "Next", bullets: ["Offer conversation separately.", "First work: search and the meeting list."] },
+      ],
+    },
     general: {
       template: "general",
       headline: "Kit understands the product: the meeting page, not the hose. Strong yes from Jordan and Elena.",

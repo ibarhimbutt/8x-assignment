@@ -86,7 +86,7 @@ const utterances = talk("q3", [
 
 const q3Review: Meeting = {
   id: "q3-launch-review",
-  title: "Q3 launch review — go or no-go",
+  title: "Q3 Product Strategy",
   startedAt: "2026-09-18T14:00:00.000Z",
   duration: 3720,
   platform: "meet",

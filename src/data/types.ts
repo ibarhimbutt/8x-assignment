@@ -16,12 +16,15 @@ export type Utterance = {
   text: string;
 };
 
+export type ActionStatus = "open" | "progress" | "done";
+
 export type ActionItem = {
   id: string;
   text: string;
   ownerId: string;
   due?: string;
   utteranceId?: string;
+  status?: ActionStatus;
 };
 
 export type HighlightType = "decision" | "quote" | "risk" | "wow";
@@ -35,13 +38,25 @@ export type Highlight = {
   utteranceId: string;
 };
 
-export type SummaryTemplateId = "general" | "standup" | "bant" | "product";
+export type SummaryTemplateId =
+  | "general"
+  | "standup"
+  | "bant"
+  | "product"
+  | "cs"
+  | "interview"
+  | "oneonone"
+  | "retro";
 
 export const TEMPLATE_LABELS: Record<SummaryTemplateId, string> = {
-  general: "General recap",
-  standup: "Stand-up",
-  bant: "Sales · BANT",
-  product: "Product review",
+  general: "General",
+  standup: "Project update",
+  bant: "Sales",
+  product: "Product",
+  cs: "Customer success",
+  interview: "Interview",
+  oneonone: "One-on-one",
+  retro: "Retrospective",
 };
 
 export type Summary = {

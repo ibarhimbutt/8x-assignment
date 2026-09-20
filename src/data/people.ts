@@ -17,6 +17,23 @@ export const people: Record<string, Person> = {
 
 export function person(id: string): Person {
   const p = people[id];
-  if (!p) throw new Error(`unknown person ${id}`);
-  return p;
+  if (p) return p;
+  const hue = [...id].reduce((n, c) => n + c.charCodeAt(0), 0) % 360;
+  const label = id.startsWith("speaker")
+    ? id.replace(/^speaker-?/, "Speaker ").trim() || "Speaker"
+    : id === "you"
+      ? "You"
+      : id.replace(/[-_]/g, " ");
+  return {
+    id,
+    name: label.charAt(0).toUpperCase() + label.slice(1),
+    role: "Participant",
+    initials: label
+      .split(" ")
+      .map((w) => w[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase(),
+    hue,
+  };
 }

@@ -1,17 +1,17 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Mono, IBM_Plex_Sans, Newsreader } from "next/font/google";
+import { IBM_Plex_Mono, Outfit, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
-const newsreader = Newsreader({
-  variable: "--font-newsreader",
+const outfit = Outfit({
+  variable: "--font-outfit",
   subsets: ["latin"],
-  style: ["normal", "italic"],
+  weight: ["400", "500", "600", "700"],
 });
 
-const plex = IBM_Plex_Sans({
-  variable: "--font-plex",
+const jakarta = Plus_Jakarta_Sans({
+  variable: "--font-jakarta",
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400", "500", "600", "700"],
 });
 
 const plexMono = IBM_Plex_Mono({
@@ -21,18 +21,18 @@ const plexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Quorum — your meetings, remembered",
+  title: "Quorum — AI notes that keep up with you",
   description:
-    "AI meeting notes, transcripts, summaries, action items, and public clip share. Capture is stubbed on purpose.",
+    "Connect your calendar, capture Google Meet in the browser, and get live transcripts, summaries, action items, and shareable clips.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
       lang="en"
-      className={`${newsreader.variable} ${plex.variable} ${plexMono.variable} h-full antialiased`}
+      className={`${outfit.variable} ${jakarta.variable} ${plexMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full">{children}</body>
+      <body className="min-h-full bg-bg text-paper">{children}</body>
     </html>
   );
 }

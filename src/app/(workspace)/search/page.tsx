@@ -99,13 +99,13 @@ function SearchInner() {
 
   return (
     <div>
-      <p className="font-mono text-[11px] tracking-[0.16em] text-brass uppercase">Search</p>
-      <h1 className="mt-2 font-display text-4xl italic">{q ? `“${q}”` : "Find a moment"}</h1>
+      <p className="font-mono text-[11px] tracking-[0.16em] text-cyan uppercase">Search</p>
+      <h1 className="mt-2 font-display text-4xl font-medium tracking-tight">{q ? `“${q}”` : "Find a moment"}</h1>
       <input
         value={q}
         onChange={(e) => setQ(e.target.value)}
         placeholder="pricing, Latticework, Maya, empty state"
-        className="mt-5 w-full max-w-xl rounded-full border border-line bg-ink-2 px-4 py-2 text-[14px] outline-none focus:border-brass/50"
+        className="mt-5 w-full max-w-xl rounded-full border border-line bg-ink-2 px-4 py-2 text-[14px] outline-none focus:border-cyan/50"
       />
       <p className="mt-3 text-[14px] text-paper-dim">
         {q ? `${hits.length} hits across meetings, transcript, people, actions, highlights.` : "Try pricing, waitlist, or October 14."}

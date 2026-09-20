@@ -45,6 +45,9 @@ export const upcoming: Upcoming[] = [
     platform: "meet",
     attendeeIds: ["maya", "dana", "priya"],
     capture: true,
+    meetingUrl: "https://meet.google.com/lookup/quorum-waitlist",
+    status: "ready",
+    source: "demo",
   },
   {
     id: "up-1on1",

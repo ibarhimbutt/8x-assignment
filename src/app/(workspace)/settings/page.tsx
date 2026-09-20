@@ -2,12 +2,18 @@
 
 import { useEffect, useState } from "react";
 import { loadSettings, saveSettings, type SettingsState } from "@/lib/local";
-import { getMeeting } from "@/data/meetings";
 
 export default function SettingsPage() {
   const [s, setS] = useState<SettingsState | null>(null);
   const [saved, setSaved] = useState(false);
-  useEffect(() => setS(loadSettings()), []);
+  const [google, setGoogle] = useState<{ connected?: boolean; configured?: boolean; email?: string }>({});
+
+  useEffect(() => {
+    setS(loadSettings());
+    void fetch("/api/google/status")
+      .then((r) => r.json())
+      .then(setGoogle);
+  }, []);
   if (!s) return <p className="text-paper-dim">Loading preferences…</p>;
 
   function update(patch: Partial<SettingsState>) {
@@ -20,57 +26,73 @@ export default function SettingsPage() {
 
   return (
     <div className="max-w-xl">
-      <p className="font-mono text-[11px] tracking-[0.16em] text-brass uppercase">Account</p>
-      <h1 className="mt-2 font-display text-4xl italic">Settings</h1>
+      <p className="text-[11px] font-semibold tracking-[0.16em] text-cyan uppercase">Account</p>
+      <h1 className="mt-2 font-display text-4xl font-medium tracking-tight">Settings</h1>
       {saved && <p className="mt-2 text-[13px] text-moss">Saved</p>}
 
       <section className="mt-8 border-t border-line pt-6">
-        <h2 className="font-mono text-[11px] tracking-[0.16em] text-brass uppercase">Profile</h2>
-        <p className="mt-2 text-[14px] text-paper-dim">Name and email live on the session. Demo user is Maya Chen.</p>
+        <h2 className="text-[11px] font-semibold tracking-[0.16em] text-cyan uppercase">Profile</h2>
+        <p className="mt-2 text-[14px] text-paper-dim">Name and email live on the signed session. Demo user is Maya Chen.</p>
       </section>
 
       <section className="mt-8 border-t border-line pt-6 space-y-3">
-        <h2 className="font-mono text-[11px] tracking-[0.16em] text-brass uppercase">Preferences</h2>
+        <h2 className="text-[11px] font-semibold tracking-[0.16em] text-cyan uppercase">Calendar</h2>
+        <p className="text-[14px] text-paper-dim">
+          {google.connected
+            ? `Google Calendar connected${google.email ? ` (${google.email})` : ""}.`
+            : google.configured === false
+              ? "Google Calendar is not configured on this deployment."
+              : "Google Calendar is disconnected."}
+        </p>
+        <a href="/calendar" className="text-[13px] text-cyan">
+          Manage calendar
+        </a>
+      </section>
+
+      <section className="mt-8 border-t border-line pt-6 space-y-3">
+        <h2 className="text-[11px] font-semibold tracking-[0.16em] text-cyan uppercase">Recording</h2>
+        <Toggle label="Auto-capture upcoming meetings" on={s.autoCapture} onChange={(v) => update({ autoCapture: v })} />
+        <Toggle label="Capture confirmation before sharing audio" on={s.consent} onChange={(v) => update({ consent: v })} />
+        <label className="block text-[13px]">
+          Transcript language
+          <input
+            value={s.language}
+            onChange={(e) => update({ language: e.target.value })}
+            className="mt-1 w-full rounded-xl border border-line bg-elevated px-3 py-2"
+          />
+        </label>
+        <p className="text-[12px] text-paper-dim">Audio source is the tab you share in the browser. Nothing is captured silently.</p>
+      </section>
+
+      <section className="mt-8 border-t border-line pt-6">
+        <h2 className="text-[11px] font-semibold tracking-[0.16em] text-cyan uppercase">AI</h2>
+        <p className="mt-2 text-[14px] text-paper-dim">
+          Agent Router if AGENT_ROUTER_API_KEY is set, otherwise Gemini, otherwise deterministic notes from the transcript.
+        </p>
+      </section>
+
+      <section className="mt-8 border-t border-line pt-6 space-y-3">
+        <h2 className="text-[11px] font-semibold tracking-[0.16em] text-cyan uppercase">Preferences</h2>
         <label className="block text-[13px]">
           Timezone
           <input
             value={s.timezone}
             onChange={(e) => update({ timezone: e.target.value })}
-            className="mt-1 w-full rounded-xl border border-line bg-ink-2 px-3 py-2"
+            className="mt-1 w-full rounded-xl border border-line bg-elevated px-3 py-2"
           />
         </label>
-        <label className="block text-[13px]">
-          Default summary template
-          <select
-            value={s.defaultTemplate}
-            onChange={(e) => update({ defaultTemplate: e.target.value })}
-            className="mt-1 w-full rounded-xl border border-line bg-ink-2 px-3 py-2"
-          >
-            <option value="general">General</option>
-            <option value="bant">Sales</option>
-            <option value="cs">Customer success</option>
-            <option value="product">Product</option>
-          </select>
-        </label>
       </section>
 
       <section className="mt-8 border-t border-line pt-6 space-y-2">
-        <h2 className="font-mono text-[11px] tracking-[0.16em] text-brass uppercase">Recording</h2>
-        <Toggle label="Auto-capture upcoming meetings" on={s.autoCapture} onChange={(v) => update({ autoCapture: v })} />
-        <Toggle label="Consent notification in the room" on={s.consent} onChange={(v) => update({ consent: v })} />
-        <p className="text-[12px] text-paper-dim">These flags are stored locally. There is still no real Zoom bot.</p>
-      </section>
-
-      <section className="mt-8 border-t border-line pt-6 space-y-2">
-        <h2 className="font-mono text-[11px] tracking-[0.16em] text-brass uppercase">Notifications</h2>
+        <h2 className="text-[11px] font-semibold tracking-[0.16em] text-cyan uppercase">Notifications</h2>
         <Toggle label="Summary ready" on={s.summaryNotify} onChange={(v) => update({ summaryNotify: v })} />
         <Toggle label="Action item reminders" on={s.actionReminders} onChange={(v) => update({ actionReminders: v })} />
       </section>
 
       <section className="mt-8 border-t border-line pt-6">
-        <h2 className="font-mono text-[11px] tracking-[0.16em] text-brass uppercase">Integrations</h2>
+        <h2 className="text-[11px] font-semibold tracking-[0.16em] text-cyan uppercase">Privacy</h2>
         <p className="mt-2 text-[14px] text-paper-dim">
-          Google Calendar, Microsoft Calendar, Zoom, Meet, and Teams are listed as future sockets. Calendar connect is simulated on the Calendar page. {getMeeting("q3-launch-review") ? "Seed data does not require them." : ""}
+          Private meetings require a session. Public share links are explicit. Capture always asks the browser for permission.
         </p>
       </section>
     </div>

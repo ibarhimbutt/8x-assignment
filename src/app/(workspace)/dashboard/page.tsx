@@ -19,43 +19,55 @@ export default async function DashboardPage() {
 
   return (
     <div>
-      <p className="font-mono text-[11px] tracking-[0.16em] text-brass uppercase">Overview</p>
-      <h1 className="mt-2 font-display text-4xl italic">
+      <p className="text-[11px] font-semibold tracking-[0.16em] text-cyan uppercase">Home</p>
+      <h1 className="mt-2 font-display text-4xl font-medium tracking-tight">
         {hello}, {first}
       </h1>
       <p className="mt-2 max-w-xl text-[14px] text-paper-dim">
-        {meetings.length} captured meetings · capture is stubbed · {openActions} action items still live on the calls
+        {meetings.length} meetings · {hours}h captured · {openActions} action items · {highlights} highlights
       </p>
 
-      <div className="mt-8 grid gap-3 sm:grid-cols-3">
-        <Stat k="Meetings captured" v={String(meetings.length)} />
-        <Stat k="Open action items" v={String(openActions)} href="/action-items" />
-        <Stat k="Highlights saved" v={String(highlights)} href="/highlights" />
+      <div className="mt-6 flex flex-wrap gap-3">
+        <Link href="/capture" className="cta px-4 py-2 text-[13px]">
+          Start live notes
+        </Link>
+        <Link href="/calendar" className="rounded-full border border-line px-4 py-2 text-[13px]">
+          Calendar status
+        </Link>
       </div>
-      <p className="mt-2 font-mono text-[11px] text-paper-dim">About {hours} hours of transcript on the clock, not as media files.</p>
+
+      <div className="mt-8 flex flex-wrap gap-x-8 gap-y-3 text-[14px]">
+        <Stat k="Meetings" v={String(meetings.length)} />
+        <Stat k="Captured" v={`${hours}h`} />
+        <Stat k="Action items" v={String(openActions)} href="/action-items" />
+        <Stat k="Highlights" v={String(highlights)} href="/highlights" />
+      </div>
 
       <div className="mt-10 grid gap-10 lg:grid-cols-2">
         <section>
-          <h2 className="font-mono text-[11px] tracking-[0.16em] text-brass uppercase">Upcoming</h2>
+          <h2 className="text-[11px] font-semibold tracking-[0.16em] text-cyan uppercase">Upcoming meetings</h2>
           <ul className="mt-3 divide-y divide-line border-y border-line">
             {upcoming.map((e) => (
               <li key={e.id} className="py-4">
                 <p className="font-mono text-[11px] text-paper-dim">
                   {formatWhen(e.startsAt)} · {formatDuration(e.duration)}
                 </p>
-                <p className="mt-1 font-display text-[20px] italic">{e.title}</p>
-                <div className="mt-2">
+                <p className="mt-1 font-display text-[20px] font-medium tracking-tight">{e.title}</p>
+                <div className="mt-2 flex flex-wrap items-center gap-3">
                   <AvatarStack people={e.attendeeIds.map(person)} />
+                  <Link
+                    href={`/live/${e.id}?title=${encodeURIComponent(e.title)}${e.meetingUrl ? `&url=${encodeURIComponent(e.meetingUrl)}` : ""}`}
+                    className="text-[13px] text-cyan"
+                  >
+                    Start live notes
+                  </Link>
                 </div>
               </li>
             ))}
           </ul>
-          <Link href="/calendar" className="mt-3 inline-block text-[13px] text-brass">
-            Open calendar
-          </Link>
         </section>
         <section>
-          <h2 className="font-mono text-[11px] tracking-[0.16em] text-brass uppercase">Recent</h2>
+          <h2 className="text-[11px] font-semibold tracking-[0.16em] text-cyan uppercase">Recent meetings</h2>
           <ul className="mt-3 divide-y divide-line border-y border-line">
             {recent.map((m) => (
               <li key={m.id}>
@@ -63,7 +75,7 @@ export default async function DashboardPage() {
                   <p className="font-mono text-[11px] text-paper-dim">
                     {formatWhen(m.startedAt)} · {formatDuration(m.duration)}
                   </p>
-                  <p className="mt-1 font-display text-[20px] italic">{m.title}</p>
+                  <p className="mt-1 font-display text-[20px] font-medium tracking-tight">{m.title}</p>
                   <p className="mt-1 line-clamp-2 text-[13px] text-paper-dim">
                     {m.summaries[m.defaultTemplate]?.headline}
                   </p>
@@ -71,7 +83,7 @@ export default async function DashboardPage() {
               </li>
             ))}
           </ul>
-          <Link href="/meetings" className="mt-3 inline-block text-[13px] text-brass">
+          <Link href="/meetings" className="mt-3 inline-block text-[13px] text-cyan">
             All meetings
           </Link>
         </section>
@@ -83,16 +95,15 @@ export default async function DashboardPage() {
 function Stat({ k, v, href }: { k: string; v: string; href?: string }) {
   const inner = (
     <>
-      <p className="font-mono text-[11px] text-paper-dim">{k}</p>
-      <p className="mt-1 font-display text-3xl italic">{v}</p>
+      <p className="font-display text-2xl font-semibold tracking-tight">{v}</p>
+      <p className="text-[12px] text-paper-dim">{k}</p>
     </>
   );
-  const cls = "rounded-2xl border border-line p-4";
   return href ? (
-    <Link href={href} className={cls}>
+    <Link href={href} className="min-w-[88px]">
       {inner}
     </Link>
   ) : (
-    <div className={cls}>{inner}</div>
+    <div className="min-w-[88px]">{inner}</div>
   );
 }

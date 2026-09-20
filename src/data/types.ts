@@ -78,7 +78,11 @@ export type Meeting = {
   actionItems: ActionItem[];
   highlights: Highlight[];
   tag?: string;
+  meetingUrl?: string;
+  audioAvailable?: boolean;
 };
+
+export type CaptureStatus = "scheduled" | "ready" | "recording" | "processing" | "completed";
 
 export type Upcoming = {
   id: string;
@@ -88,4 +92,32 @@ export type Upcoming = {
   platform: Platform;
   attendeeIds: string[];
   capture: boolean;
+  meetingUrl?: string;
+  attendees?: { email: string; name?: string }[];
+  status?: CaptureStatus;
+  source?: "google" | "demo";
+};
+
+export type LiveNotes = {
+  keyPoints: string[];
+  decisions: string[];
+  actionItems: string[];
+  questions: string[];
+  topics: string[];
+};
+
+export function emptyLiveNotes(): LiveNotes {
+  return { keyPoints: [], decisions: [], actionItems: [], questions: [], topics: [] };
+}
+
+export type CalendarEvent = {
+  id: string;
+  title: string;
+  startsAt: string;
+  duration: number;
+  platform: Platform | "none";
+  meetingUrl?: string;
+  attendees: { email: string; name?: string }[];
+  status: CaptureStatus;
+  source: "google" | "demo";
 };

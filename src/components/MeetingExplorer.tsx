@@ -43,14 +43,14 @@ export function MeetingExplorer({ title = "My meetings" }: { title?: string }) {
 
   return (
     <div>
-      <p className="font-mono text-[11px] tracking-[0.16em] text-brass uppercase">Library</p>
-      <h1 className="mt-2 font-display text-4xl italic">{title}</h1>
+      <p className="font-mono text-[11px] tracking-[0.16em] text-cyan uppercase">Library</p>
+      <h1 className="mt-2 font-display text-4xl font-medium tracking-tight">{title}</h1>
       <div className="mt-5 flex flex-wrap gap-2">
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="Filter by title or person"
-          className="rounded-full border border-line bg-ink-2 px-3 py-1.5 text-[13px] outline-none focus:border-brass/50"
+          className="rounded-full border border-line bg-ink-2 px-3 py-1.5 text-[13px] outline-none focus:border-cyan/50"
         />
         <select
           value={tag}
@@ -84,13 +84,13 @@ export function MeetingExplorer({ title = "My meetings" }: { title?: string }) {
                   <p className="font-mono text-[11px] text-paper-dim">
                     {formatWhen(m.startedAt)} · {formatDuration(m.duration)} · {platformLabel(m.platform)}
                     {m.tag && (
-                      <span className="ml-2 rounded-full border border-line px-2 py-0.5 text-brass-2">{m.tag}</span>
+                      <span className="ml-2 rounded-full border border-line px-2 py-0.5 text-cyan-2">{m.tag}</span>
                     )}
                     <span className="ml-2">
                       {m.actionItems.length} actions · {m.highlights.length} highlights
                     </span>
                   </p>
-                  <h2 className="mt-1 font-display text-[22px] italic leading-snug">{m.title}</h2>
+                  <h2 className="mt-1 font-display text-[22px] font-medium tracking-tight leading-snug">{m.title}</h2>
                   <p className="mt-1 line-clamp-2 text-[13px] text-paper-dim">
                     {m.summaries[m.defaultTemplate]?.headline}
                   </p>

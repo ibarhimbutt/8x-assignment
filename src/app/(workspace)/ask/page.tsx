@@ -30,8 +30,8 @@ export default function AskPage() {
 
   return (
     <div className="max-w-2xl">
-      <p className="font-mono text-[11px] tracking-[0.16em] text-brass uppercase">Ask your meetings</p>
-      <h1 className="mt-2 font-display text-4xl italic">What did we already decide?</h1>
+      <p className="font-mono text-[11px] tracking-[0.16em] text-cyan uppercase">Ask your meetings</p>
+      <h1 className="mt-2 font-display text-4xl font-medium tracking-tight">What did we already decide?</h1>
       <p className="mt-2 text-[14px] text-paper-dim">
         If a Gemini key is present, answers go through the model. Otherwise this is deterministic over the seeded corpus — still the questions a buyer would ask.
       </p>
@@ -46,7 +46,7 @@ export default function AskPage() {
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="Ask about pricing, onboarding, owners…"
-          className="w-full rounded-full border border-line bg-ink-2 px-4 py-2.5 text-[14px] outline-none focus:border-brass/50"
+          className="w-full rounded-full border border-line bg-ink-2 px-4 py-2.5 text-[14px] outline-none focus:border-cyan/50"
         />
       </form>
       <div className="mt-4 flex flex-wrap gap-2">
@@ -64,12 +64,14 @@ export default function AskPage() {
       {pending && <p className="mt-8 text-[14px] text-paper-dim">Looking through the calls…</p>}
       {result && !pending && (
         <div className="mt-8 rounded-2xl border border-line p-5">
-          <p className="font-mono text-[10px] uppercase text-brass">{result.source === "gemini" ? "Gemini" : "Seeded corpus"}</p>
+          <p className="font-mono text-[10px] uppercase text-cyan">
+            {result.source === "agent-router" ? "Agent Router" : result.source === "gemini" ? "Gemini" : "Seeded corpus"}
+          </p>
           <p className="mt-3 text-[15px] leading-relaxed">{result.answer}</p>
           <ul className="mt-5 space-y-2 text-[13px]">
             {result.citations.map((c) => (
               <li key={`${c.meetingId}-${c.t}`}>
-                <Link href={`/meetings/${c.meetingId}?t=${Math.floor(c.t)}`} className="text-brass">
+                <Link href={`/meetings/${c.meetingId}?t=${Math.floor(c.t)}`} className="text-cyan">
                   {c.title} · {formatClock(c.t)}
                 </Link>
                 <p className="text-paper-dim">{c.excerpt}</p>

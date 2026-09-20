@@ -11,7 +11,7 @@ import { Avatar } from "./Avatar";
 const TYPES: HighlightType[] = ["decision", "quote", "risk", "wow"];
 
 function typeClass(t: HighlightType): string {
-  if (t === "decision") return "text-brass";
+  if (t === "decision") return "text-cyan";
   if (t === "quote") return "text-paper";
   if (t === "risk") return "text-risk";
   return "text-moss";
@@ -29,7 +29,15 @@ function barsFor(id: string, n = 96): number[] {
   return out;
 }
 
-export function MeetingView({ meeting, initialTime = 0 }: { meeting: Meeting; initialTime?: number }) {
+export function MeetingView({
+  meeting,
+  initialTime = 0,
+  audioSrc,
+}: {
+  meeting: Meeting;
+  initialTime?: number;
+  audioSrc?: string | null;
+}) {
   const [time, setTime] = useState(initialTime);
   const [playing, setPlaying] = useState(false);
   const [template, setTemplate] = useState<SummaryTemplateId>(meeting.defaultTemplate);
@@ -39,6 +47,7 @@ export function MeetingView({ meeting, initialTime = 0 }: { meeting: Meeting; in
   const [speed, setSpeed] = useState(1);
   const activeRef = useRef<HTMLButtonElement | null>(null);
   const last = useRef<number | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     setLocalHi(loadLocalHighlights(meeting.id));
@@ -46,10 +55,19 @@ export function MeetingView({ meeting, initialTime = 0 }: { meeting: Meeting; in
 
   useEffect(() => {
     setTime(initialTime);
+    if (audioRef.current) audioRef.current.currentTime = initialTime;
   }, [initialTime]);
 
   useEffect(() => {
-    if (!playing) {
+    const el = audioRef.current;
+    if (!el || !audioSrc) return;
+    el.playbackRate = speed;
+    if (playing) void el.play();
+    else el.pause();
+  }, [playing, audioSrc, speed]);
+
+  useEffect(() => {
+    if (audioSrc || !playing) {
       last.current = null;
       return;
     }
@@ -70,7 +88,7 @@ export function MeetingView({ meeting, initialTime = 0 }: { meeting: Meeting; in
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [playing, meeting.duration, speed]);
+  }, [playing, meeting.duration, speed, audioSrc]);
 
   const highlights = useMemo(
     () => [...meeting.highlights, ...localHi].sort((a, b) => a.start - b.start),
@@ -98,7 +116,9 @@ export function MeetingView({ meeting, initialTime = 0 }: { meeting: Meeting; in
   const wave = useMemo(() => barsFor(meeting.id), [meeting.id]);
 
   function seek(s: number) {
-    setTime(Math.min(meeting.duration, Math.max(0, s)));
+    const next = Math.min(meeting.duration, Math.max(0, s));
+    setTime(next);
+    if (audioRef.current) audioRef.current.currentTime = next;
   }
 
   function addHighlight(type: HighlightType, utterance: Utterance) {
@@ -131,6 +151,14 @@ export function MeetingView({ meeting, initialTime = 0 }: { meeting: Meeting; in
 
   return (
     <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_340px]">
+      {audioSrc ? (
+        <audio
+          ref={audioRef}
+          src={audioSrc}
+          onTimeUpdate={(e) => setTime(e.currentTarget.currentTime)}
+          onEnded={() => setPlaying(false)}
+        />
+      ) : null}
       <div>
         <Wave
           duration={meeting.duration}
@@ -155,7 +183,7 @@ export function MeetingView({ meeting, initialTime = 0 }: { meeting: Meeting; in
                   type="button"
                   onClick={() => seek(row.start)}
                   className={`flex w-full scroll-mt-24 gap-3 rounded-lg px-2 py-2 text-left transition ${
-                    on ? "bg-white/5" : "hover:bg-white/[0.03]"
+                    on ? "bg-cyan/10 ring-1 ring-cyan/30" : "hover:bg-white/[0.03]"
                   }`}
                 >
                   <span className="w-12 shrink-0 pt-1 font-mono text-[11px] text-paper-dim">
@@ -180,7 +208,7 @@ export function MeetingView({ meeting, initialTime = 0 }: { meeting: Meeting; in
                   type="button"
                   aria-label="Highlight this moment"
                   onClick={() => setPending(row)}
-                  className="absolute left-0 top-2 flex h-6 w-6 -translate-x-1 items-center justify-center rounded-full border border-line bg-ink text-brass opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
+                  className="absolute left-0 top-2 flex h-6 w-6 -translate-x-1 items-center justify-center rounded-full border border-line bg-ink text-cyan opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
                 >
                   +
                 </button>
@@ -199,7 +227,7 @@ export function MeetingView({ meeting, initialTime = 0 }: { meeting: Meeting; in
                 type="button"
                 onClick={() => setTemplate(id)}
                 className={`shrink-0 rounded-full px-3 py-1 text-[12px] ${
-                  template === id ? "bg-brass text-ink" : "border border-line text-paper-dim"
+                  template === id ? "bg-cyan text-ink" : "border border-line text-paper-dim"
                 }`}
               >
                 {TEMPLATE_LABELS[id]}
@@ -208,14 +236,14 @@ export function MeetingView({ meeting, initialTime = 0 }: { meeting: Meeting; in
           </div>
           {summary && (
             <div>
-              <p className="font-display text-[22px] leading-snug italic">{summary.headline}</p>
+              <p className="font-display text-[22px] leading-snug font-medium tracking-tight">{summary.headline}</p>
               {summary.sections.map((sec) => (
                 <section key={sec.title} className="mt-4">
-                  <h3 className="font-mono text-[10px] tracking-[0.16em] text-brass uppercase">{sec.title}</h3>
+                  <h3 className="font-mono text-[10px] tracking-[0.16em] text-cyan uppercase">{sec.title}</h3>
                   <ul className="mt-2 space-y-1.5 text-[13px] leading-relaxed text-paper-dim">
                     {sec.bullets.map((b) => (
                       <li key={b} className="pl-3" style={{ textIndent: "-0.65rem" }}>
-                        <span className="text-brass">· </span>
+                        <span className="text-cyan">· </span>
                         {b}
                       </li>
                     ))}
@@ -227,7 +255,7 @@ export function MeetingView({ meeting, initialTime = 0 }: { meeting: Meeting; in
         </div>
 
         <div className="mt-4 rounded-2xl border border-line p-4">
-          <h3 className="font-mono text-[10px] tracking-[0.16em] text-brass uppercase">Action items</h3>
+          <h3 className="font-mono text-[10px] tracking-[0.16em] text-cyan uppercase">Action items</h3>
           <ul className="mt-3 space-y-3">
             {meeting.actionItems.map((item) => {
               const owner = person(item.ownerId);
@@ -252,7 +280,7 @@ export function MeetingView({ meeting, initialTime = 0 }: { meeting: Meeting; in
         </div>
 
         <div className="mt-4 rounded-2xl border border-line p-4">
-          <h3 className="font-mono text-[10px] tracking-[0.16em] text-brass uppercase">Highlights</h3>
+          <h3 className="font-mono text-[10px] tracking-[0.16em] text-cyan uppercase">Highlights</h3>
           <ul className="mt-3 space-y-2">
             {highlights.map((h) => (
               <li key={h.id} className="flex items-start justify-between gap-2">
@@ -277,7 +305,7 @@ export function MeetingView({ meeting, initialTime = 0 }: { meeting: Meeting; in
       {pending && (
         <div className="fixed inset-0 z-30 flex items-end justify-center bg-black/50 p-4 sm:items-center">
           <div className="w-full max-w-sm rounded-2xl border border-line bg-ink p-4">
-            <p className="font-display text-xl italic">Mark this moment</p>
+            <p className="font-display text-xl font-medium">Mark this moment</p>
             <p className="mt-2 line-clamp-3 text-[13px] text-paper-dim">{pending.text}</p>
             <div className="mt-4 flex flex-wrap gap-2">
               {TYPES.map((t) => (
@@ -340,7 +368,7 @@ function Wave({
         <button
           type="button"
           onClick={onToggle}
-          className="flex h-10 w-10 items-center justify-center rounded-full bg-brass text-ink"
+          className="flex h-10 w-10 items-center justify-center rounded-full bg-cyan text-ink"
           aria-label={playing ? "Pause" : "Play"}
         >
           {playing ? "❚❚" : "▶"}
@@ -362,7 +390,7 @@ function Wave({
               <option value={2}>2×</option>
             </select>
           </label>
-          Stubbed capture · clock, not a Zoom file
+          Stubbed clock for seeded meetings · captured calls can play real audio in this session
         </span>
       </div>
       <div
@@ -383,7 +411,7 @@ function Wave({
               className="flex-1 rounded-sm"
               style={{
                 height: `${b * 100}%`,
-                background: on ? "var(--brass)" : "rgba(243,238,228,0.18)",
+                background: on ? "var(--cyan)" : "rgba(255,255,255,0.16)",
               }}
             />
           );

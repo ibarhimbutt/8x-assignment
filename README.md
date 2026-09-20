@@ -2,9 +2,10 @@
 
 A 15-hour rebuild of [Fathom](https://fathom.video) — AI meeting notes — for the 8x assignment.
 
+Live: [temporary-turbo-nova-hkrr4kc.vercel.app](https://temporary-turbo-nova-hkrr4kc.vercel.app)  
 Repo: [github.com/ibarhimbutt/8x-assignment](https://github.com/ibarhimbutt/8x-assignment)
 
-**The meeting capture/recording layer is simulated for this assignment.** This was an intentional product decision: spend the time on meeting intelligence and product experience, not a Zoom/Meet/Teams bot.
+**The capture layer uses explicit browser tab audio (`getDisplayMedia`) rather than an autonomous meeting bot.** That is an intentional product decision: the assignment allows stubbing capture; this build goes further with user-granted Meet/tab audio, live transcription when an STT key is present, and live AI notes.
 
 The live site has a public landing page. The workspace requires an account. **Share clips stay public** — no login to watch a moment.
 
@@ -15,35 +16,29 @@ email:    maya@quorum.demo
 password: quorum-demo
 ```
 
-Or click **See how it works** / **Continue as Maya**.
+Or click **Open demo workspace** / **Continue as Maya**.
 
 ## What to click (walkthrough, under 5 minutes)
 
-1. Land, continue as Maya. Overview is a week of work, not an empty list.
-2. Open **Q3 Product Strategy** (8 people, ~62 minutes).
-3. Press play. Click Dana at 28:34 (unanimous no-go). Player and transcript stay locked. Switch templates.
-4. Hover a line, press **+**, mark a highlight, **share**. Open the `/share/…` link in a private window.
-5. Search `pricing` or `Latticework`. Ask meetings: “What pricing objections came up this month?”
-6. Calendar connect is a simulation. Capture runs a fake pipeline, then opens a finished call.
+1. Land, continue as Maya. Home is a week of work, not an empty list.
+2. Open **Q3 Product Strategy** (8 people, ~62 minutes). Play. Click Dana at 28:34.
+3. Calendar → Connect Google Calendar (real OAuth if keys are set; otherwise sample events labeled Demo).
+4. **Start live notes** — share a Google Meet tab with audio. Live transcript + AI notes. Stop → processed meeting.
+5. Hover a line, mark a highlight, share. Open `/share/…` logged out.
+6. Search `pricing`. Ask meetings: “What pricing objections came up this month?”
 
-Say the bot is stubbed in the first thirty seconds.
+## Architecture
 
-## Features
-
-- Email/password auth, demo login, onboarding, protected workspace
-- Dashboard, meetings library (filters), 10 seeded meetings
-- Player + transcript lock, templates, action items, highlights
-- Search across transcript / people / actions / highlights
-- Ask meetings (Gemini if `GEMINI_API_KEY`, otherwise seeded answers)
-- Public `/share/[token]` clips
-- Simulated calendar OAuth and capture pipeline
-- Settings stored locally
+- **Auth:** HMAC-signed httpOnly cookies. Signup stores a few users in a signed cookie so the demo boots with zero required env vars.
+- **Google Calendar:** OAuth (`calendar.readonly`). Tokens in an httpOnly cookie. Meet links detected from `hangoutLink` / conference data. Token refresh included.
+- **Capture:** User shares a tab. Audio chunks go to `/api/stt`. If no STT key, browser speech recognition, then a clearly labeled demo transcript while audio is still captured.
+- **AI:** Agent Router if configured, else Gemini, else deterministic extraction from the transcript. Ask Meetings is grounded in stored evidence.
+- **Share:** HMAC-free self-describing clip tokens. Public `/share/[token]`.
+- **Data:** Seeded corpus in `src/data` (10 meetings, including 62-minute / 8-person Q3). Captured meetings persist in localStorage. Optional audio blob stays in-memory for the tab session.
 
 ## Stack
 
-Next.js App Router, TypeScript, Tailwind v4. Seed data in `src/data`. No database required to boot.
-
-Auth is HMAC-signed httpOnly cookies (not Supabase). Signup persists a few users in a signed cookie so the demo deploys with **zero required env vars**. Swap in Supabase using the placeholders in `.env.example` when you have a project.
+Next.js App Router, TypeScript, Tailwind v4, Lucide.
 
 ## Local
 
@@ -52,19 +47,17 @@ npm install
 npm run dev
 ```
 
-Optional `.env.local`:
+Copy `.env.example` to `.env.local` as needed.
 
-```
-AUTH_SECRET=
-GEMINI_API_KEY=
-```
+Google redirect URI: `http://localhost:3000/api/google/callback` (and the production origin equivalent).
 
-## Mocked on purpose
+## Honest limitations
 
-- Zoom / Meet / Teams recording bot
-- Google / Microsoft calendar OAuth
-- Multi-device user database (cookie session)
-- Real video files (the player is a clock)
+- No Zoom/Meet/Teams bot that auto-joins.
+- Tab audio requires Chrome (or another browser that can share tab audio) and the user to enable Share tab audio.
+- Cloud STT and Agent Router need API keys. Without them, capture still works; notes fall back to heuristics / demo mode.
+- Cookie sessions are not a multi-device user database. Supabase placeholders are in `.env.example`.
+- Seeded meetings use a clock player, not Zoom media files. Live captures can play recorded audio in the same browser session.
 
 ## Assignment logs
 

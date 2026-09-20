@@ -21,8 +21,8 @@ export default function SharedPage() {
 
   return (
     <div>
-      <p className="font-mono text-[11px] tracking-[0.16em] text-brass uppercase">Inbox</p>
-      <h1 className="mt-2 font-display text-4xl italic">Shared with me</h1>
+      <p className="font-mono text-[11px] tracking-[0.16em] text-cyan uppercase">Inbox</p>
+      <h1 className="mt-2 font-display text-4xl font-medium tracking-tight">Shared with me</h1>
       <p className="mt-2 max-w-xl text-[14px] text-paper-dim">
         Clips anyone can open without an account. These are the moments this workspace would have been sent.
       </p>
@@ -32,9 +32,9 @@ export default function SharedPage() {
             <p className="font-mono text-[11px] text-paper-dim">
               {c.type} · {c.meetingTitle} · {formatClock(c.start)}
             </p>
-            <h2 className="mt-1 font-display text-[20px] italic">{c.title}</h2>
+            <h2 className="mt-1 font-display text-[20px] font-medium tracking-tight">{c.title}</h2>
             <div className="mt-2 flex gap-4 text-[13px]">
-              <Link href={`/share/${c.token}`} className="text-brass">
+              <Link href={`/share/${c.token}`} className="text-cyan">
                 Open public clip
               </Link>
               <Link href={`/meetings/${c.meetingId}?t=${Math.floor(c.start)}`} className="text-paper-dim">

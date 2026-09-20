@@ -1,6 +1,7 @@
 import { meetings } from "@/data/meetings";
 import { person } from "@/data/people";
 import { formatClock } from "@/lib/format";
+import { answerMeetingQuestion } from "@/lib/aiRouter";
 
 export type AskCitation = {
   meetingId: string;
@@ -12,7 +13,7 @@ export type AskCitation = {
 export type AskResult = {
   answer: string;
   citations: AskCitation[];
-  source: "gemini" | "seed";
+  source: "gemini" | "seed" | "agent-router";
 };
 
 function seedAsk(question: string): AskResult {
@@ -89,40 +90,11 @@ function seedAsk(question: string): AskResult {
 
 export async function askMeetings(question: string): Promise<AskResult> {
   const fallback = seedAsk(question);
-  const key = process.env.GEMINI_API_KEY;
-  if (!key) return fallback;
-  try {
-    const context = fallback.citations
-      .map((c) => `${c.title} @ ${formatClock(c.t)}: ${c.excerpt}`)
-      .join("\n");
-    const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [
-            {
-              parts: [
-                {
-                  text: `You are Quorum. Answer from this meeting evidence only. Be concise.\n\n${context}\n\nQuestion: ${question}`,
-                },
-              ],
-            },
-          ],
-        }),
-      },
-    );
-    if (!res.ok) return fallback;
-    const json = (await res.json()) as {
-      candidates?: { content?: { parts?: { text?: string }[] } }[];
-    };
-    const text = json.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
-    if (!text) return fallback;
-    return { ...fallback, answer: text, source: "gemini" };
-  } catch {
-    return fallback;
-  }
+  const context = fallback.citations.map((c) => `${c.title} @ ${formatClock(c.t)}: ${c.excerpt}`).join("\n");
+  const result = await answerMeetingQuestion(question, context);
+  if (!result.text) return fallback;
+  const source = result.source === "agent-router" ? "agent-router" : result.source === "gemini" ? "gemini" : "seed";
+  return { ...fallback, answer: result.text, source };
 }
 
 export function generateMeetingSummary() {

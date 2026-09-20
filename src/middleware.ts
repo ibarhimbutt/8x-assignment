@@ -15,6 +15,7 @@ const APP_PREFIXES = [
   "/capture",
   "/onboarding",
   "/shared",
+  "/live",
 ];
 
 function isPublic(path: string): boolean {

@@ -32,8 +32,8 @@ export default function ActionItemsPage() {
 
   return (
     <div>
-      <p className="font-mono text-[11px] tracking-[0.16em] text-brass uppercase">Work</p>
-      <h1 className="mt-2 font-display text-4xl italic">Action items</h1>
+      <p className="font-mono text-[11px] tracking-[0.16em] text-cyan uppercase">Work</p>
+      <h1 className="mt-2 font-display text-4xl font-medium tracking-tight">Action items</h1>
       <p className="mt-2 text-[14px] text-paper-dim">{rows.filter((r) => r.status !== "done").length} open · click status to cycle</p>
       <ul className="mt-8 divide-y divide-line border-y border-line">
         {rows.map((row) => {
@@ -45,7 +45,7 @@ export default function ActionItemsPage() {
                 <p className="mt-1 font-mono text-[11px] text-paper-dim">
                   {owner.name}
                   {row.due ? ` · ${row.due}` : ""} ·{" "}
-                  <Link href={`/meetings/${row.meetingId}`} className="text-brass">
+                  <Link href={`/meetings/${row.meetingId}`} className="text-cyan">
                     {row.meetingTitle}
                   </Link>
                 </p>

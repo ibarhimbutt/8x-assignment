@@ -2,6 +2,8 @@
 
 A 15-hour rebuild of [Fathom](https://fathom.video) — AI meeting notes — for the 8x assignment.
 
+Repo: [github.com/ibarhimbutt/8x-assignment](https://github.com/ibarhimbutt/8x-assignment)
+
 **The meeting capture/recording layer is simulated for this assignment.** This was an intentional product decision: spend the time on meeting intelligence and product experience, not a Zoom/Meet/Teams bot.
 
 The live site has a public landing page. The workspace requires an account. **Share clips stay public** — no login to watch a moment.

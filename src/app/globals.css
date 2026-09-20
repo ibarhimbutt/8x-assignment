@@ -21,9 +21,10 @@
   --risk: #ff5a67;
   --warn: #f5b942;
   --line: rgba(255, 255, 255, 0.1);
-  --font-display: var(--font-outfit), "Helvetica Neue", sans-serif;
-  --font-sans: var(--font-jakarta), "Helvetica Neue", sans-serif;
+  --font-display: var(--font-sora), "Helvetica Neue", sans-serif;
+  --font-sans: var(--font-sora), "Helvetica Neue", sans-serif;
   --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+  --font-button: "Ttroundsneuecond Md", "TT Rounds Neue Cond", "TT Rounds Neue", var(--font-sora), sans-serif;
 }
 
 @theme inline {
@@ -50,6 +51,7 @@
   --font-display: var(--font-display);
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
+  --font-button: var(--font-button);
 }
 
 html,

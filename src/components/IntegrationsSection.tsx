@@ -107,11 +107,11 @@ function DiagramSVG() {
     { x: 720, y: 444 },  // Asana
   ];
 
-  // Two offset triangles
+  // Two offset triangles — round to 2dp to avoid SSR/client float mismatch
   const tri = (r: number, offset: number) => {
     const pts = [0, 1, 2].map((i) => {
       const a = ((i * 120 + offset - 90) * Math.PI) / 180;
-      return `${cx + Math.cos(a) * r},${cy + Math.sin(a) * r}`;
+      return `${Math.round((cx + Math.cos(a) * r) * 100) / 100},${Math.round((cy + Math.sin(a) * r) * 100) / 100}`;
     });
     return pts.join(" ");
   };
@@ -157,16 +157,18 @@ function DiagramSVG() {
         </g>
       ))}
 
-      {/* Extra subtle radial lines for depth */}
+      {/* Extra subtle radial lines for depth — round to 2dp to avoid SSR/client float mismatch */}
       {Array.from({ length: 18 }).map((_, i) => {
         const a = ((i * 20) * Math.PI) / 180;
+        const cos = Math.round(Math.cos(a) * 100) / 100;
+        const sin = Math.round(Math.sin(a) * 100) / 100;
         return (
           <line
             key={`r-${i}`}
-            x1={cx + Math.cos(a) * 30}
-            y1={cy + Math.sin(a) * 30}
-            x2={cx + Math.cos(a) * 340}
-            y2={cy + Math.sin(a) * 340}
+            x1={cx + cos * 30}
+            y1={cy + sin * 30}
+            x2={cx + cos * 340}
+            y2={cy + sin * 340}
             stroke="rgba(255,255,255,0.025)"
             strokeWidth="0.5"
           />

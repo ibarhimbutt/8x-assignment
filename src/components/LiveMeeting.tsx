@@ -195,30 +195,43 @@ export function LiveMeeting({
       });
 
       chunksRef.current = [];
-      const rec = new MediaRecorder(stream, { mimeType: pickMime() });
+      let rec: MediaRecorder | null = null;
+      try {
+        rec = new MediaRecorder(stream, { mimeType: pickMime() });
+      } catch {
+        // Some streams (e.g. screen-only without real audio codec) can't create a MediaRecorder
+        rec = null;
+      }
       recRef.current = rec;
-      rec.ondataavailable = async (e) => {
-        if (e.data.size < 400) return;
-        chunksRef.current.push(e.data);
-        try {
-          const fd = new FormData();
-          fd.set("audio", e.data, "chunk.webm");
-          const res = await fetch("/api/stt", { method: "POST", body: fd });
-          const json = (await res.json()) as { text?: string; configured?: boolean };
-          if (json.text) {
-            setMode("stt");
-            pushLine("speaker", json.text);
-            void refreshNotes();
-          } else if (json.configured === false && mode !== "browser" && linesRef.current.length === 0) {
-            startBrowserSpeech();
+      if (rec) {
+        rec.ondataavailable = async (e) => {
+          if (e.data.size < 400) return;
+          chunksRef.current.push(e.data);
+          try {
+            const fd = new FormData();
+            fd.set("audio", e.data, "chunk.webm");
+            const res = await fetch("/api/stt", { method: "POST", body: fd });
+            const json = (await res.json()) as { text?: string; configured?: boolean };
+            if (json.text) {
+              setMode("stt");
+              pushLine("speaker", json.text);
+              void refreshNotes();
+            } else if (json.configured === false && mode !== "browser" && linesRef.current.length === 0) {
+              startBrowserSpeech();
+            }
+          } catch {
+            /* next chunk */
           }
+        };
+        try {
+          rec.start(2800);
         } catch {
-          /* next chunk */
+          // MediaRecorder.start() can throw if the stream has no usable audio
+          recRef.current = null;
         }
-      };
+      }
       startRef.current = Date.now();
       lastNotesAt.current = Date.now();
-      rec.start(2800);
       setPhase("live");
       setElapsed(0);
       window.setTimeout(() => {

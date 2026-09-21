@@ -10,6 +10,7 @@ import { StarsBackground } from "@/components/StarsBackground";
 import { FeatureCarousel } from "@/components/FeatureCarousel";
 import { TeamsSection } from "@/components/TeamsSection";
 import { ValuePropsSection } from "@/components/ValuePropsSection";
+import { IntegrationsSection } from "@/components/IntegrationsSection";
 import { Button } from "@/components/ui/button";
 
 function NavDropdown({ title, items }: { title: string, items: string[] }) {
@@ -119,6 +120,7 @@ export default function LandingPage() {
       <FeatureCarousel />
       <TeamsSection />
       <ValuePropsSection />
+      <IntegrationsSection />
 
       {/* Bottom Gradient */}
       <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-[800px] bg-[radial-gradient(ellipse_at_bottom,_#084d6e_0%,_transparent_60%)] opacity-80 z-0" />
